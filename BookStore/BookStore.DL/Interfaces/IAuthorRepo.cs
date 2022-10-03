@@ -14,6 +14,7 @@ namespace BookStore.DL.Interfaces
         public Author? AddUser(Author user);
         public Author? DeleteUser(int id);
         public Author? UpdateUser(Author person);
+        public Author? GetAuthorByName(string authorName);
 
     }
 }

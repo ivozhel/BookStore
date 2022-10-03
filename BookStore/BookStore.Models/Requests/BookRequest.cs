@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookStore.Models.Models
+namespace BookStore.Models.Requests
 {
-    public class Book
+    public class BookRequest
     {
-        public int ID { get; set; }
         public string Title { get; init; }
         public int AuthorId { get; init; }
     }

@@ -5,7 +5,7 @@ using BookStore.Models.Models;
 namespace BookStore.DL.Repositories.InMemoryRepos
 {
     public class AuthorInMemoryRepo:IAuthorRepo
-    {
+    {        
         private static List<Author> _users = new List<Author>() {
 
             new Author()
@@ -53,7 +53,10 @@ namespace BookStore.DL.Repositories.InMemoryRepos
 
             try
             {
-                _users.Add(user);
+                if (GetAuthorByName(user.Name) is null)
+                    _users.Add(user);
+                else
+                    return null;
 
             }
             catch (Exception ex)
@@ -84,5 +87,9 @@ namespace BookStore.DL.Repositories.InMemoryRepos
             return user;
         }
 
+        public Author? GetAuthorByName(string authorName)
+        {
+            return _users.FirstOrDefault(x => x.Name.Equals(authorName));
+        }
     }
 }

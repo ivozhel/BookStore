@@ -1,19 +1,25 @@
-﻿using BookStore.BL.Interfaces;
+﻿using AutoMapper;
+using BookStore.BL.Interfaces;
 using BookStore.DL.Interfaces;
 using BookStore.Models.Models;
+using BookStore.Models.Requests;
 
 namespace BookStore.BL.Services
 {
     public class BookService : IBookService
     {
+
+        private readonly IMapper _mapper;
         private readonly IBookRepo _bookRepo;
-        public BookService(IBookRepo bookRepo)
+        public BookService(IBookRepo bookRepo,IMapper mapper)
         {
             _bookRepo = bookRepo;
+            _mapper = mapper;
         }
-        public Book? AddBook(Book book)
+        public Book? AddBook(BookRequest book)
         {
-            return _bookRepo.AddBook(book);
+            var bookToAdd = _mapper.Map<Book>(book);
+            return _bookRepo.AddBook(bookToAdd);
         }
 
         public Book? DeleteBook(int id)
@@ -31,9 +37,20 @@ namespace BookStore.BL.Services
             return _bookRepo.GetByID(id);
         }
 
-        public Book? UpdateBook(Book book)
+        public bool IsBookDuplicated(BookRequest book)
         {
-            return _bookRepo.UpdateBook(book);
+            if (_bookRepo.GetAllBook().Any(x=>x.Title.Equals(book.Title) && x.AuthorId == book.AuthorId))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Book? UpdateBook(BookRequest book,int id)
+        {
+            var bookToAdd = _mapper.Map<Book>(book);
+            bookToAdd.ID = id;
+            return _bookRepo.UpdateBook(bookToAdd);
         }
     }
 }

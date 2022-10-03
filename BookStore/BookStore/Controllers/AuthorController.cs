@@ -1,8 +1,5 @@
 using BookStore.BL.Interfaces;
-using BookStore.BL.Services;
-using BookStore.DL.Interfaces;
-using BookStore.DL.Repositories.InMemoryRepos;
-using BookStore.Models.Models;
+using BookStore.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -19,31 +16,70 @@ namespace BookStore.Controllers
             _logger = logger;
             _authorService = authorService;
         }
-
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetAuthors")]
-        public IEnumerable<Author> Get()
+        public IActionResult Get()
         {
-            return _authorService.GetAllUsers();
+            return Ok(_authorService.GetAllUsers());
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("ByID")]
-        public Author? Get(int id)
+        public IActionResult Get(int id)
         {
-            return _authorService.GetByID(id);
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+            var author = _authorService.GetByID(id);
+            if (author is not null)
+            {
+                return Ok(_authorService.GetByID(id));
+            }
+            else
+            {
+                return NotFound("Author with this id dose not exist");
+            }
         }
         [HttpPost]
-        public void Add([FromBody] Author user)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Add([FromBody] AuthorRequest authorRequest)
         {
-            _authorService.AddUser(user);
+            var existingAutor = _authorService.GetAuthorByName(authorRequest.Name);
+            if (existingAutor is null)
+            {
+                return Ok(_authorService.AddUser(authorRequest));
+            }
+            else
+                return BadRequest("Author already exists");
+
         }
         [HttpPut]
-        public Author? Update(Author user)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Update(AuthorRequest author, int id)
         {
-            return _authorService.UpdateUser(user);
+            if (_authorService.GetByID(id) is null)
+            {
+                return NotFound("Author with this id dose not exist");
+            }
+
+            return Ok(_authorService.UpdateUser(author, id));
         }
         [HttpDelete]
-        public Author? Delete(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Delete(int id)
         {
-            return _authorService.DeleteUser(id);
+            if (_authorService.GetByID(id) is null)
+            {
+                return NotFound("Author with this id dose not exist");
+            }
+
+            return Ok(_authorService.DeleteUser(id));
         }
 
     }
