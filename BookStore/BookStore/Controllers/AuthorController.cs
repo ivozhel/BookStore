@@ -1,3 +1,4 @@
+using BookStore.BL.Interfaces;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepos;
 using BookStore.Models.Models;
@@ -9,13 +10,13 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorRepo _authorRepo;
+        private readonly IAuthorService _authorService;
         private readonly ILogger<AuthorController> _logger;
 
-        public AuthorController(ILogger<AuthorController> logger, IAuthorRepo userInMemoryRepo)
+        public AuthorController(ILogger<AuthorController> logger, IAuthorService authorService)
         {
             _logger = logger;
-            _authorRepo = userInMemoryRepo;
+            _authorService = authorService;
         }
 
         [HttpGet(Name = "GetAuthors")]
