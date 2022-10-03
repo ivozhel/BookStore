@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<IPersonRepo,PersonInMemoryRepo>();
 builder.Services.AddSingleton<IAuthorRepo, AuthorInMemoryRepo>();
+builder.Services.AddSingleton<IBookRepo, BookInMemoryRepo>();
 builder.Services.AddSingleton<IPersonService, PersoneService>();
 builder.Services.AddSingleton<IAuthorService, AuthorService>();
 builder.Services.AddSingleton<IBookService, BookService>();
