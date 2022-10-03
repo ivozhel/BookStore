@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BookStore.Models.Models;
+using BookStore.Models.Requests;
 
 namespace BookStore.BL.Interfaces
 {
@@ -11,8 +12,9 @@ namespace BookStore.BL.Interfaces
     {
         public IEnumerable<Book> GetAllBook();
         public Book? GetByID(int id);
-        public Book? AddBook(Book user);
+        public Book? AddBook(BookRequest book);
         public Book? DeleteBook(int id);
-        public Book? UpdateBook(Book person);
+        public Book? UpdateBook(BookRequest book,int id);
+        public bool IsBookDuplicated (BookRequest book);
     }
 }
