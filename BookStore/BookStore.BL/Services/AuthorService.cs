@@ -40,18 +40,7 @@ namespace BookStore.BL.Services
 
         public IEnumerable<Author> GetAllUsers()
         {
-            //try
-            //{
-            //throw new Exception("Test ex");
-            //}
-            //catch (Exception ex)
-            //{
-
-            //_logger.LogError(ex.Message);
-            //return null;
-            //}
             return _authorRepo.GetAllUsers();
-
         }
 
         public Author? GetAuthorByName(string name)
