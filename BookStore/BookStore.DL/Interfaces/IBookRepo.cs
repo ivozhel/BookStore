@@ -7,7 +7,7 @@ using BookStore.Models.Models;
 
 namespace BookStore.DL.Interfaces
 {
-    internal interface IBookRepo
+    public interface IBookRepo
     {
         public IEnumerable<Book> GetAllBook();
         public Book? GetByID(int id);

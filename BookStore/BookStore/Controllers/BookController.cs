@@ -9,39 +9,39 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
-        private readonly IBookService _BookRepo;
+        private readonly IBookService _bookService;
         private readonly ILogger<BookController> _logger;
 
         public BookController(ILogger<BookController> logger, IBookService bookInMemoryRepo)
         {
             _logger = logger;
-            _BookRepo = bookInMemoryRepo;
+            _bookService = bookInMemoryRepo;
         }
 
         [HttpGet(Name = "GetBooks")]
         public IEnumerable<Book> Get()
         {
-            return _BookRepo.GetAllBook();
+            return _bookService.GetAllBook();
         }
         [HttpGet("ByID")]
         public Book? Get(int id)
         {
-            return _BookRepo.GetByID(id);
+            return _bookService.GetByID(id);
         }
         [HttpPost]
         public void Add([FromBody] Book book)
         {
-            _BookRepo.AddBook(book);
+            _bookService.AddBook(book);
         }
         [HttpPut]
         public Book? Update(Book book)
         {
-            return _BookRepo.UpdateBook(book);
+            return _bookService.UpdateBook(book);
         }
         [HttpDelete]
         public Book? Delete(int id)
         {
-            return _BookRepo.DeleteBook(id);
+            return _bookService.DeleteBook(id);
         }
     }
 }
