@@ -19,23 +19,23 @@ namespace BookStore.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetBooks")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_bookService.GetAllBook());
+            return Ok(await _bookService.GetAllBook());
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("ByID")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
             }
-            var book = _bookService.GetByID(id);
+            var book = await _bookService.GetByID(id);
             if (book is not null)
             {
-                return Ok(_bookService.GetByID(id));
+                return Ok(await _bookService.GetByID(id));
             }
             else
             {
@@ -46,34 +46,34 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public IActionResult Add([FromBody] BookRequest book)
+        public async Task<IActionResult> Add([FromBody] BookRequest book)
         {
-            if (_bookService.IsBookDuplicated(book))
+            if (await _bookService.IsBookDuplicated(book))
             {
                 BadRequest("Book already exists");
             }
-            return Ok(_bookService.AddBook(book));
+            return Ok(await _bookService.AddBook(book));
         }
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Update(BookRequest book, int id)
+        public async Task<IActionResult> Update(BookRequest book, int id)
         {
-            if (_bookService.GetByID(id) is null)
+            if (await _bookService.GetByID(id) is null)
             {
                 return NotFound("Book with this id dose not exist");
             }
-            return Ok(_bookService.UpdateBook(book, id));
+            return Ok(await _bookService.UpdateBook(book, id));
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _bookService.GetByID(id);
-            return Ok(_bookService.DeleteBook(id));
+            await _bookService.GetByID(id);
+            return Ok(await _bookService.DeleteBook(id));
         }
     }
 }

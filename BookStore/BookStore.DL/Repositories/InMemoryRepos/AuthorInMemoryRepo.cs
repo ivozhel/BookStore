@@ -4,8 +4,9 @@ using BookStore.Models.Models;
 
 namespace BookStore.DL.Repositories.InMemoryRepos
 {
-    public class AuthorInMemoryRepo:IAuthorRepo
-    {        
+    public class AuthorInMemoryRepo
+    {
+        private int idCount = 4;     
         private static List<Author> _users = new List<Author>() {
 
             new Author()
@@ -38,7 +39,7 @@ namespace BookStore.DL.Repositories.InMemoryRepos
 
         }
 
-        public IEnumerable<Author> GetAllUsers()
+        public IEnumerable<Author> GetAll()
         {
             return _users;
         }
@@ -54,7 +55,11 @@ namespace BookStore.DL.Repositories.InMemoryRepos
             try
             {
                 if (GetAuthorByName(user.Name) is null)
+                {
+                    user.ID = idCount;
                     _users.Add(user);
+                    idCount++;
+                }
                 else
                     return null;
 

@@ -10,11 +10,11 @@ namespace BookStore.BL.Interfaces
 {
     public interface IBookService
     {
-        public IEnumerable<Book> GetAllBook();
-        public Book? GetByID(int id);
-        public Book? AddBook(BookRequest book);
-        public Book? DeleteBook(int id);
-        public Book? UpdateBook(BookRequest book,int id);
-        public bool IsBookDuplicated (BookRequest book);
+        public Task<IEnumerable<Book>> GetAllBook();
+        public Task<Book> GetByID(int id);
+        public Task<Book> AddBook(BookRequest book);
+        public Task<Book> DeleteBook(int id);
+        public Task<Book> UpdateBook(BookRequest book,int id);
+        public Task<bool> IsBookDuplicated (BookRequest book);
     }
 }

@@ -11,46 +11,52 @@ namespace BookStore.BL.Services
 
         private readonly IMapper _mapper;
         private readonly IBookRepo _bookRepo;
-        public BookService(IBookRepo bookRepo,IMapper mapper)
+        private readonly IAuthorRepo _authorRepo;
+        public BookService(IBookRepo bookRepo,IMapper mapper, IAuthorRepo authorRepo)
         {
             _bookRepo = bookRepo;
             _mapper = mapper;
+            _authorRepo = authorRepo;
         }
-        public Book? AddBook(BookRequest book)
+        public async Task<Book> AddBook(BookRequest book)
         {
-            var bookToAdd = _mapper.Map<Book>(book);
-            return _bookRepo.AddBook(bookToAdd);
-        }
-
-        public Book? DeleteBook(int id)
-        {
-            return _bookRepo.DeleteBook(id);
-        }
-
-        public IEnumerable<Book> GetAllBook()
-        {
-            return _bookRepo.GetAllBook();
-        }
-
-        public Book? GetByID(int id)
-        {
-            return _bookRepo.GetByID(id);
-        }
-
-        public bool IsBookDuplicated(BookRequest book)
-        {
-            if (_bookRepo.GetAllBook().Any(x=>x.Title.Equals(book.Title) && x.AuthorId == book.AuthorId))
+            if (await _authorRepo.GetByID(book.AuthorId) is null)
             {
-                return true;
+                return null;
             }
-            return false;
+            var bookToAdd = _mapper.Map<Book>(book);
+            return await _bookRepo.AddBook(bookToAdd);
         }
 
-        public Book? UpdateBook(BookRequest book,int id)
+        public async Task<Book> DeleteBook(int id)
         {
+            return await _bookRepo.DeleteBook(id);
+        }
+
+        public async Task<IEnumerable<Book>> GetAllBook()
+        {
+            return await _bookRepo.GetAllBook();
+        }
+
+        public async Task<Book> GetByID(int id)
+        {
+            return await _bookRepo.GetByID(id);
+        }
+
+        public async Task<bool> IsBookDuplicated(BookRequest book)
+        {
+            return await _bookRepo.IsBookDuplicated(book);
+        }
+
+        public async Task<Book> UpdateBook(BookRequest book,int id)
+        {
+            if(_authorRepo.GetByID(book.AuthorId) is null)
+            {
+                return null;
+            }
             var bookToAdd = _mapper.Map<Book>(book);
             bookToAdd.ID = id;
-            return _bookRepo.UpdateBook(bookToAdd);
+            return await _bookRepo.UpdateBook(bookToAdd);
         }
     }
 }
