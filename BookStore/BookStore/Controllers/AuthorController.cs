@@ -18,23 +18,23 @@ namespace BookStore.Controllers
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetAuthors")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_authorService.GetAllUsers());
+            return Ok(await _authorService.GetAll());
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("ByID")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
             }
-            var author = _authorService.GetByID(id);
+            var author = await _authorService.GetByID(id);
             if (author is not null)
             {
-                return Ok(_authorService.GetByID(id));
+                return Ok(await _authorService.GetByID(id));
             }
             else
             {
@@ -44,12 +44,12 @@ namespace BookStore.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Add([FromBody] AuthorRequest authorRequest)
+        public async Task<IActionResult> Add([FromBody] AuthorRequest authorRequest)
         {
-            var existingAutor = _authorService.GetAuthorByName(authorRequest.Name);
+            var existingAutor = await _authorService.GetAuthorByName(authorRequest.Name);
             if (existingAutor is null)
             {
-                return Ok(_authorService.AddUser(authorRequest));
+                return Ok(await _authorService.AddUser(authorRequest));
             }
             else
                 return BadRequest("Author already exists");
@@ -59,27 +59,27 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Update(AuthorRequest author, int id)
+        public async Task<IActionResult> Update(AuthorRequest author, int id)
         {
             if (_authorService.GetByID(id) is null)
             {
                 return NotFound("Author with this id dose not exist");
             }
 
-            return Ok(_authorService.UpdateUser(author, id));
+            return Ok(await _authorService.UpdateUser(author, id));
         }
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_authorService.GetByID(id) is null)
+            if (await _authorService.GetByID(id) is null)
             {
                 return NotFound("Author with this id dose not exist");
             }
 
-            return Ok(_authorService.DeleteUser(id));
+            return Ok(await _authorService.DeleteUser(id));
         }
 
     }

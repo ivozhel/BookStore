@@ -8,7 +8,7 @@ using BookStore.Models.Models;
 
 namespace BookStore.DL.Repositories.InMemoryRepos
 {
-    public class BookInMemoryRepo : IBookRepo
+    public class BookInMemoryRepo 
     {
         private static List<Book> _books = new List<Book>() {
 

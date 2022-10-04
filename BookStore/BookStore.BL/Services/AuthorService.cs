@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BookStore.BL.Interfaces;
 using BookStore.DL.Interfaces;
-using BookStore.DL.Repositories.InMemoryRepos;
 using BookStore.Models.Models;
 using BookStore.Models.Requests;
 using Microsoft.Extensions.Logging;
@@ -16,48 +10,54 @@ namespace BookStore.BL.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepo _authorRepo;
+        private readonly IBookRepo _bookRepo;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthorService> _logger;
 
-        public AuthorService(IAuthorRepo authorRepo, IMapper mapper, ILogger<AuthorService> logger)
+        public AuthorService(IAuthorRepo authorRepo, IMapper mapper, ILogger<AuthorService> logger, IBookRepo bookRepo)
         {
             _authorRepo = authorRepo;
             _mapper = mapper;
             _logger = logger;
+            _bookRepo = bookRepo;
         }
-        public Author? AddUser(AuthorRequest author)
+        public async Task<Author> AddUser(AuthorRequest author)
         {
 
             var auth = _mapper.Map<Author>(author);
-            return _authorRepo.AddUser(auth);
+            return await _authorRepo.AddAuthor(auth);
 
         }
 
-        public Author? DeleteUser(int id)
+        public async Task<Author> DeleteUser(int id)
         {
-            return _authorRepo?.DeleteUser(id);
+            if (await _bookRepo.HaveBooks(id))
+            {
+                return null;
+            }
+            return await _authorRepo.DeleteAuthor(id);
         }
 
-        public IEnumerable<Author> GetAllUsers()
+        public async Task<IEnumerable<Author>> GetAll()
         {
-            return _authorRepo.GetAllUsers();
+            return await _authorRepo.GetAll();
         }
 
-        public Author? GetAuthorByName(string name)
+        public async Task<Author> GetAuthorByName(string name)
         {
-            return _authorRepo.GetAuthorByName(name);
+            return await _authorRepo.GetAuthorByName(name);
         }
 
-        public Author? GetByID(int id)
+        public async Task<Author> GetByID(int id)
         {
-            return _authorRepo.GetByID(id);
+            return await _authorRepo.GetByID(id);
         }
 
-        public Author? UpdateUser(AuthorRequest author, int id)
+        public async Task<Author> UpdateUser(AuthorRequest author, int id)
         {
             var auth = _mapper.Map<Author>(author);
             auth.ID = id;
-            return _authorRepo.UpdateUser(auth);
+            return await _authorRepo.UpdateAuthor(auth);
         }
     }
 }

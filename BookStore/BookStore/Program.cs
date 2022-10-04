@@ -1,19 +1,25 @@
 using BookStore.Extensions;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
 var logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
-    .WriteTo.Console(theme:AnsiConsoleTheme.Literate)
+    .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 
 builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 builder.Services.RegisterRepos()
-.RegisterServices().AddAutoMapper(typeof(Program));
+    .RegisterServices().AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

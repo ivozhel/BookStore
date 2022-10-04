@@ -9,12 +9,12 @@ namespace BookStore.DL.Interfaces
 {
     public interface IAuthorRepo
     {
-        public IEnumerable<Author> GetAllUsers();
-        public Author? GetByID(int id);
-        public Author? AddUser(Author user);
-        public Author? DeleteUser(int id);
-        public Author? UpdateUser(Author person);
-        public Author? GetAuthorByName(string authorName);
+        public Task<IEnumerable<Author>> GetAll();
+        public Task<Author> GetByID(int id);
+        public Task<Author> AddAuthor(Author user);
+        public Task<Author> DeleteAuthor(int id);
+        public Task<Author> UpdateAuthor(Author person);
+        public Task<Author> GetAuthorByName(string authorName);
 
     }
 }
