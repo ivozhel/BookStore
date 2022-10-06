@@ -1,5 +1,7 @@
 using BookStore.BL.Interfaces;
+using BookStore.Models.Models.MediatR.Commands.Authors;
 using BookStore.Models.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -8,19 +10,17 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorService _authorService;
-        private readonly ILogger<AuthorController> _logger;
+        private readonly IMediator _mediator;
 
-        public AuthorController(ILogger<AuthorController> logger, IAuthorService authorService)
+        public AuthorController( IMediator mediator)
         {
-            _logger = logger;
-            _authorService = authorService;
+            _mediator = mediator;
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetAuthors")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _authorService.GetAll());
+            return Ok(await _mediator.Send(new GetAllAuthorsCommand()));
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,10 +31,10 @@ namespace BookStore.Controllers
             {
                 return BadRequest();
             }
-            var author = await _authorService.GetByID(id);
+            var author = await _mediator.Send(new GetAuthorByIDCommand(id));
             if (author is not null)
             {
-                return Ok(await _authorService.GetByID(id));
+                return Ok(author);
             }
             else
             {
@@ -46,10 +46,11 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Add([FromBody] AuthorRequest authorRequest)
         {
-            var existingAutor = await _authorService.GetAuthorByName(authorRequest.Name);
+            
+            var existingAutor = await _mediator.Send(new GetAuthorByNameCommand(authorRequest.Name));
             if (existingAutor is null)
             {
-                return Ok(await _authorService.AddAuthor(authorRequest));
+                return Ok(await _mediator.Send(new AddAuthorCommand(authorRequest)));
             }
             else
                 return BadRequest("Author already exists");
@@ -60,24 +61,24 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(AuthorRequest author, int id)
         {
-            if (await _authorService.GetByID(id) is null)
+
+            if (await _mediator.Send(new GetAuthorByIDCommand(id)) is null)
             {
                 return NotFound("Author with this id dose not exist");
             }
-
-            return Ok(await _authorService.UpdateAuthor(author, id));
+            return Ok(await _mediator.Send(new UpdateAuthorCommand(author, id)));
         }
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _authorService.GetByID(id) is null)
+            if (await _mediator.Send(new GetAuthorByIDCommand(id)) is null)
             {
                 return NotFound("Author with this id dose not exist");
             }
-
-            return Ok(await _authorService.DeleteAuthor(id));
+            ;
+            return Ok(await _mediator.Send(new DeleteAuthorCommand(id)));
         }
 
     }
