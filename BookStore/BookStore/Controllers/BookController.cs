@@ -50,7 +50,7 @@ namespace BookStore.Controllers
         {
             if (await _bookService.IsBookDuplicated(book))
             {
-                BadRequest("Book already exists");
+                return BadRequest("Book already exists");
             }
             return Ok(await _bookService.AddBook(book));
         }
@@ -72,7 +72,10 @@ namespace BookStore.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            await _bookService.GetByID(id);
+            if (await _bookService.GetByID(id) is null)
+            {
+                return NotFound("Book with this id dose not exist");
+            }
             return Ok(await _bookService.DeleteBook(id));
         }
     }

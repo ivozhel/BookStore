@@ -9,7 +9,9 @@ namespace BookStore.Models.Models
     public class Book
     {
         public int ID { get; set; }
-        public string Title { get; init; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public string Title { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public int AuthorId { get; init; }
         public int Quantity { get; set; }
         public DateTime LastUpdated { get; set; }
