@@ -21,7 +21,7 @@ namespace BookStore.BL.Services
             _logger = logger;
             _bookRepo = bookRepo;
         }
-        public async Task<Author> AddUser(AuthorRequest author)
+        public async Task<Author> AddAuthor(AuthorRequest author)
         {
 
             var auth = _mapper.Map<Author>(author);
@@ -29,7 +29,7 @@ namespace BookStore.BL.Services
 
         }
 
-        public async Task<Author> DeleteUser(int id)
+        public async Task<Author> DeleteAuthor(int id)
         {
             if (await _bookRepo.HaveBooks(id))
             {
@@ -53,7 +53,7 @@ namespace BookStore.BL.Services
             return await _authorRepo.GetByID(id);
         }
 
-        public async Task<Author> UpdateUser(AuthorRequest author, int id)
+        public async Task<Author> UpdateAuthor(AuthorRequest author, int id)
         {
             var auth = _mapper.Map<Author>(author);
             auth.ID = id;

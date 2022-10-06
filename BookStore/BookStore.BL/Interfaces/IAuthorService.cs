@@ -7,9 +7,9 @@ namespace BookStore.BL.Interfaces
     {
         public Task<IEnumerable<Author>> GetAll();
         public Task<Author> GetByID(int id);
-        public Task<Author> AddUser(AuthorRequest author);
-        public Task<Author> DeleteUser(int id);
-        public Task<Author> UpdateUser(AuthorRequest author,int id);
+        public Task<Author> AddAuthor(AuthorRequest author);
+        public Task<Author> DeleteAuthor(int id);
+        public Task<Author> UpdateAuthor(AuthorRequest author,int id);
         public Task<Author> GetAuthorByName(string name);
     }
 }

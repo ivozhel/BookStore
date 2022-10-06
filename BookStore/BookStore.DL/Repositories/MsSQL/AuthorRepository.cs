@@ -26,7 +26,7 @@ namespace BookStore.DL.Repositories.MsSQL
                     await conn.OpenAsync();
                     await conn.QueryAsync<Author>("INSERT INTO Authors VALUES (@Name, @Age, @DateOfBirth, @NickName)",
                         new { Name = author.Name, Age = author.Age, DateOfBirth = author.DateOfBirth, NickName = author.Nickname });
-                    return author;
+                    return await GetAuthorByName(author.Name);
                 }
             }
             catch (Exception e)
@@ -115,12 +115,6 @@ namespace BookStore.DL.Repositories.MsSQL
 
             return null;
         }
-
-        public Task<bool> HaveBooks(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Author> UpdateAuthor(Author person)
         {
             try

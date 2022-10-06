@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 using BookStore.DL.Interfaces;
 using BookStore.Models.Models;
 using BookStore.Models.Requests;
@@ -30,7 +25,7 @@ namespace BookStore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
                     await conn.QueryAsync<Book>("INSERT INTO Books VALUES (@AuthorId, @Title, @LastUpdated, @Quantity, @Price)",
-                        new { AuthorId = book.AuthorId, Title = book.Title, LastUpdated = book.LastUpdated, Quantity = book.Quantity, Price = book.Price });
+                        new { AuthorId = book.AuthorId, Title = book.Title, LastUpdated = DateTime.Now, Quantity = book.Quantity, Price = book.Price });
                     return book;
                 }
             }
