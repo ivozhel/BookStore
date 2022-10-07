@@ -18,8 +18,8 @@ namespace BookStore.Extensions
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
             services.AddSingleton<IPersonService, PersoneService>();
-            services.AddSingleton<IAuthorService, AuthorService>();
-            services.AddSingleton<IBookService, BookService>();
+            //services.AddSingleton<IAuthorService, AuthorService>();
+            //services.AddSingleton<IBookService, BookService>();
             return services;
         }
     }

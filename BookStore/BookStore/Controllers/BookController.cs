@@ -1,5 +1,6 @@
-﻿using BookStore.BL.Interfaces;
+﻿using BookStore.Models.Models.MediatR.Commands.Books;
 using BookStore.Models.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -8,20 +9,18 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
-        private readonly IBookService _bookService;
-        private readonly ILogger<BookController> _logger;
+        private readonly IMediator _mediator;
 
-        public BookController(ILogger<BookController> logger, IBookService bookInMemoryRepo)
+        public BookController(IMediator mediator)
         {
-            _logger = logger;
-            _bookService = bookInMemoryRepo;
+            _mediator = mediator;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(Name = "GetBooks")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _bookService.GetAllBook());
+            return Ok(await _mediator.Send(new GetAllBooksCommand()));
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -32,10 +31,10 @@ namespace BookStore.Controllers
             {
                 return BadRequest();
             }
-            var book = await _bookService.GetByID(id);
+            var book = await _mediator.Send(new GetBookByIDCommand(id));
             if (book is not null)
             {
-                return Ok(await _bookService.GetByID(id));
+                return Ok(book);
             }
             else
             {
@@ -48,11 +47,11 @@ namespace BookStore.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] BookRequest book)
         {
-            if (await _bookService.IsBookDuplicated(book))
+            if (await _mediator.Send(new IsBookDuplicatedCommand(book)))
             {
                 return BadRequest("Book already exists");
             }
-            return Ok(await _bookService.AddBook(book));
+            return Ok(await _mediator.Send(new AddBookCommand(book)));
         }
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,11 +59,11 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(BookRequest book, int id)
         {
-            if (await _bookService.GetByID(id) is null)
+            if (await _mediator.Send(new GetBookByIDCommand(id)) is null)
             {
                 return NotFound("Book with this id dose not exist");
             }
-            return Ok(await _bookService.UpdateBook(book, id));
+            return Ok(await _mediator.Send(new UpdateBookCommand(book, id)));
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,11 +71,11 @@ namespace BookStore.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _bookService.GetByID(id) is null)
+            if (await _mediator.Send(new GetBookByIDCommand(id)) is null)
             {
                 return NotFound("Book with this id dose not exist");
             }
-            return Ok(await _bookService.DeleteBook(id));
+            return Ok(await _mediator.Send(new DeleteBookCommand(id)));
         }
     }
 }
