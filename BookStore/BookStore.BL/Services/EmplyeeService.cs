@@ -4,14 +4,12 @@ using BookStore.Models.Models.Users;
 
 namespace BookStore.BL.Services
 {
-    public class EmplyeeService : IEmplyeeService, IUserService
+    public class EmplyeeService : IEmplyeeService
     {
         private readonly IEmployeeRepo _employeeRepo;
-        private readonly IUserRepo _userRepo;
-        public EmplyeeService(IEmployeeRepo employeeRepo, IUserRepo userRepo)
+        public EmplyeeService(IEmployeeRepo employeeRepo)
         {
             _employeeRepo = employeeRepo;
-            _userRepo = userRepo;
         }
         public async Task<Employee> AddEmployee(Employee employee)
         {
@@ -37,12 +35,6 @@ namespace BookStore.BL.Services
         {
             return await _employeeRepo.GetByID(id);
         }
-
-        public async Task<User> GetUsersInfo(string email, string password)
-        {
-            return await _userRepo.GetUsersInfo(email, password);
-        }
-
         public async Task<Employee> UpdateEmployee(Employee employee)
         {
             return await _employeeRepo.UpdateEmployee(employee);

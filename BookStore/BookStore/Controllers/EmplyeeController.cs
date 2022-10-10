@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
 {
-    [Authorize(AuthenticationSchemes ="Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("[controller]")]
     public class EmplyeeController : ControllerBase
@@ -17,6 +17,7 @@ namespace BookStore.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        //[Authorize(Roles = "Admin")]
         [HttpGet(Name = "GetEmployees")]
         public async Task<IActionResult> Get()
         {

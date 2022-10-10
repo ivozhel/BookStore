@@ -1,5 +1,6 @@
 using System.Text;
 using BookStore.BL.CommandHandlers.BookHandlers;
+using BookStore.DL.Repositories.MsSQL;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Middleware;
@@ -8,6 +9,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -77,6 +79,18 @@ builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri("https://google.bg"),name:"Google Service");
 
 builder.Services.AddMediatR(typeof(GetAllBooksHandler).Assembly);
+
+builder.Services.AddIdentity<User, UserRole>()
+    .AddUserStore<UserStore>()
+    .AddRoleStore<UserRolesStore>();
+
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy("Admin",policy =>
+    {
+        policy.RequireClaim("Admin");
+    });
+});
 
 var app = builder.Build();
 
