@@ -4,12 +4,12 @@ using BookStore.DL.Repositories.MsSQL;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Middleware;
+using BookStore.Models.Models.Configurations;
 using BookStore.Models.Models.Users;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -91,6 +91,9 @@ builder.Services.AddAuthorization(o =>
         policy.RequireClaim("Admin");
     });
 });
+
+builder.Services.Configure<KafkaConfiguration>(
+    builder.Configuration.GetSection(nameof(KafkaConfiguration)));
 
 var app = builder.Build();
 
