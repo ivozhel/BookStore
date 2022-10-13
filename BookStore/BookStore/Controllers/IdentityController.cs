@@ -2,11 +2,13 @@
 using System.Security.Claims;
 using System.Text;
 using BookStore.BL.Interfaces;
+using BookStore.Models.Models.Configurations;
 using BookStore.Models.Models.Users;
 using BookStore.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BookStore.Controllers

@@ -3,6 +3,7 @@ using BookStore.BL.Services;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepos;
 using BookStore.DL.Repositories.MsSQL;
+using BookStore.Models.Models;
 
 namespace BookStore.Extensions
 {
