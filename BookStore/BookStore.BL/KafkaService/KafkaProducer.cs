@@ -20,7 +20,8 @@ namespace BookStore.BL.KafkaService
 
         public async Task Produce(TValue value, TKey key)
         {
-            var producer = new ProducerBuilder<TKey,TValue>(_producerConfig).SetValueSerializer(new SerializerGen<TValue>()).Build();
+            var producer = new ProducerBuilder<TKey,TValue>(_producerConfig).SetValueSerializer(new SerializerGen<TValue>())
+                                                                            .SetKeySerializer(new SerializerGen<TKey>()).Build();
             var msg = new Message<TKey, TValue>()
             {
                 Key = key,

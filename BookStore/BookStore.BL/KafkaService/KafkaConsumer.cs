@@ -24,7 +24,8 @@ namespace BookStore.BL.KafkaService
 
         public void Consume()
         {
-            var consumer = new ConsumerBuilder<TKey, TValue>(_consumerConfig).SetValueDeserializer(new DeserializeGen<TValue>()).Build();
+            var consumer = new ConsumerBuilder<TKey, TValue>(_consumerConfig).SetValueDeserializer(new DeserializeGen<TValue>())
+                                                                             .SetKeyDeserializer(new DeserializeGen<TKey>()).Build();
             consumer.Subscribe(_kafkaSettings.Value.Topic);
 
             while (true)
