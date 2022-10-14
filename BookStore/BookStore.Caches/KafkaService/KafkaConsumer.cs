@@ -32,7 +32,7 @@ namespace BookStore.Caches.KafkaService
 
                 while (true)
                 {
-                    var result = consumer.Consume();
+                    var result = consumer.Consume(cancellationToken);
                     if (result != null)
                     {
                         _memoList.Add(result.Value);
