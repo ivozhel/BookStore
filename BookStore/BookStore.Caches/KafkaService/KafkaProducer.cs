@@ -1,9 +1,9 @@
-﻿using BookStore.BL.KafkaService.GenericSerAndDeser;
+﻿using BookStore.Caches.KafkaService.GenericSerAndDeser;
 using BookStore.Models.Models.Configurations;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 
-namespace BookStore.BL.KafkaService
+namespace BookStore.Caches.KafkaService
 {
     public class KafkaProducer<TKey,TValue>
     {
@@ -27,7 +27,7 @@ namespace BookStore.BL.KafkaService
                 Key = key,
                 Value = value
             };
-            await producer.ProduceAsync(_kafkaSettings.Value.Topic, msg);
+            await producer.ProduceAsync(typeof(TValue).Name, msg);
 
         }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using MessagePack;
 
-namespace BookStore.BL.KafkaService.GenericSerAndDeser
+namespace BookStore.Caches.KafkaService.GenericSerAndDeser
 {
     public class DeserializeGen<T> : IDeserializer<T>
     {

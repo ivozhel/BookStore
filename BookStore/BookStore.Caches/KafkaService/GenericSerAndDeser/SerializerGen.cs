@@ -1,7 +1,7 @@
 ﻿using Confluent.Kafka;
 using MessagePack;
 
-namespace BookStore.BL.KafkaService.GenericSerAndDeser
+namespace BookStore.Caches.KafkaService.GenericSerAndDeser
 {
     public class SerializerGen<T> : ISerializer<T>
     {

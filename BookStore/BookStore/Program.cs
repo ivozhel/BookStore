@@ -1,9 +1,11 @@
 using System.Text;
 using BookStore.BL.CommandHandlers.BookHandlers;
+using BookStore.BL.Services;
 using BookStore.DL.Repositories.MsSQL;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Middleware;
+using BookStore.Models.Models;
 using BookStore.Models.Models.Configurations;
 using BookStore.Models.Models.Users;
 using FluentValidation;
@@ -30,7 +32,9 @@ builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 builder.Services.RegisterRepos()
-    .RegisterServices().AddAutoMapper(typeof(Program));
+    .RegisterServices()
+    .SubscribeToCache<int, Book>()
+    .AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -94,6 +98,7 @@ builder.Services.AddAuthorization(o =>
 
 builder.Services.Configure<KafkaConfiguration>(
     builder.Configuration.GetSection(nameof(KafkaConfiguration)));
+
 
 var app = builder.Build();
 

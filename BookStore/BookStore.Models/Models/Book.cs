@@ -1,20 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BookStore.Models.Models.Interfaces;
+using MessagePack;
 
 namespace BookStore.Models.Models
 {
-    public class Book
+    [MessagePackObject]
+    public class Book : ICacheItem<int>
     {
+        [Key(0)]
         public int ID { get; set; }
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        [Key(1)]
         public string Title { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        [Key(2)]
         public int AuthorId { get; init; }
+        [Key(3)]
         public int Quantity { get; set; }
+        [Key(4)]
         public DateTime LastUpdated { get; set; }
+        [Key(5)]
         public decimal Price { get; set; }
+
+        public int GetKey()
+        {
+            return ID;
+        }
     }
 }
