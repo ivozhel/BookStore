@@ -1,11 +1,11 @@
-﻿using BookStore.BL.KafkaService.GenericSerAndDeser;
+﻿using BookStore.Caches.KafkaService.GenericSerAndDeser;
 using BookStore.Models.Models.Configurations;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 
-namespace BookStore.BL.KafkaService
+namespace BookStore.Caches.KafkaService
 {
-    public class KafkaConsumer<TKey,TValue>
+    public class KafkaConsumer<TKey, TValue>
     {
         private readonly ConsumerConfig _consumerConfig;
         private readonly IOptions<KafkaConfiguration> _kafkaSettings;
@@ -16,26 +16,30 @@ namespace BookStore.BL.KafkaService
             _consumerConfig = new ConsumerConfig()
             {
                 BootstrapServers = _kafkaSettings.Value.BootstrapServers,
-                AutoOffsetReset = (AutoOffsetReset) _kafkaSettings.Value.AutoOffsetReset,
+                AutoOffsetReset = (AutoOffsetReset)_kafkaSettings.Value.AutoOffsetReset,
                 GroupId = _kafkaSettings.Value.GroupId,
             };
             _memoList = new List<TValue>();
         }
 
-        public void Consume()
+        public Task Consume(CancellationToken cancellationToken)
         {
             var consumer = new ConsumerBuilder<TKey, TValue>(_consumerConfig).SetValueDeserializer(new DeserializeGen<TValue>())
                                                                              .SetKeyDeserializer(new DeserializeGen<TKey>()).Build();
-            consumer.Subscribe(_kafkaSettings.Value.Topic);
-
-            while (true)
+            consumer.Subscribe(typeof(TValue).Name);
+            Task.Run(() =>
             {
-                var result = consumer.Consume();
-                if (result!=null)
+
+                while (true)
                 {
-                    _memoList.Add(result.Value);
+                    var result = consumer.Consume(cancellationToken);
+                    if (result != null)
+                    {
+                        _memoList.Add(result.Value);
+                    }
                 }
-            }
+            },cancellationToken);
+            return Task.CompletedTask;
         }
         public List<TValue> ReturnValues()
         {

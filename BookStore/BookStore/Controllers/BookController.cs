@@ -1,4 +1,6 @@
-﻿using BookStore.Models.Models.MediatR.Commands.Books;
+﻿using BookStore.Caches.KafkaService;
+using BookStore.Models.Models;
+using BookStore.Models.Models.MediatR.Commands.Books;
 using BookStore.Models.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +12,25 @@ namespace BookStore.Controllers
     public class BookController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly KafkaConsumer<int, Book> _consumer;
 
-        public BookController(IMediator mediator)
+        public BookController(IMediator mediator, KafkaConsumer<int, Book> consumer)
         {
             _mediator = mediator;
+            _consumer = consumer;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet(Name = "GetBooks")]
+        [HttpGet("GetBooks")]
         public async Task<IActionResult> Get()
         {
             return Ok(await _mediator.Send(new GetAllBooksCommand()));
+        }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("GetBooksFromKafka")]
+        public async Task<IActionResult> GetFromKafka()
+        {
+            return Ok(_consumer.ReturnValues().Count);
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

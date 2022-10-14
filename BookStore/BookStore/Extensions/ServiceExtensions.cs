@@ -1,9 +1,13 @@
 ﻿using BookStore.BL.Interfaces;
 using BookStore.BL.Services;
+using BookStore.Caches.KafkaService;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepos;
 using BookStore.DL.Repositories.MsSQL;
 using BookStore.Models.Models;
+using BookStore.Models.Models.Interfaces;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Newtonsoft.Json.Linq;
 
 namespace BookStore.Extensions
 {
@@ -26,6 +30,12 @@ namespace BookStore.Extensions
             services.AddTransient<IIdentityService, IdentityService>();
             //services.AddSingleton<IAuthorService, AuthorService>();
             //services.AddSingleton<IBookService, BookService>();
+            return services;
+        }
+        public static IServiceCollection SubscribeToCache<TKey,TValue>(this IServiceCollection services)
+        {
+            services.AddHostedService<ConsumerHostedService<int, Book>>();
+            services.AddSingleton<KafkaConsumer<TKey,TValue>>();
             return services;
         }
     }
