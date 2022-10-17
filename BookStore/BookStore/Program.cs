@@ -1,6 +1,5 @@
 using System.Text;
 using BookStore.BL.CommandHandlers.BookHandlers;
-using BookStore.BL.Services;
 using BookStore.DL.Repositories.MsSQL;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
@@ -98,6 +97,12 @@ builder.Services.AddAuthorization(o =>
 
 builder.Services.Configure<KafkaConfiguration>(
     builder.Configuration.GetSection(nameof(KafkaConfiguration)));
+
+builder.Services.Configure<MongoPurchaseConfiguration>(
+    builder.Configuration.GetSection(nameof(MongoPurchaseConfiguration)));
+builder.Services.Configure<MongoShoppingCart>(
+    builder.Configuration.GetSection(nameof(MongoShoppingCart)));
+
 
 
 var app = builder.Build();

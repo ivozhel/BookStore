@@ -55,7 +55,7 @@ namespace BookStore.BL.Services
                 return null;
             }
             var bookToAdd = _mapper.Map<Book>(book);
-            bookToAdd.ID = id;
+            bookToAdd.Id = id;
             return await _bookRepo.UpdateBook(bookToAdd);
         }
     }

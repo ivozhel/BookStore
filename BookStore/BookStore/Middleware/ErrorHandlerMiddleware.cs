@@ -38,7 +38,7 @@ namespace BookStore.Middleware
                         response.StatusCode = 500;
                         break;
                 }
-                var result = JsonConvert.SerializeObject(new { message = error.Message });
+                var result = JsonConvert.SerializeObject(new { message = error.Message, stackTrace = error.StackTrace }, Formatting.Indented);
                 _logger.LogError(result);
                 await response.WriteAsync(result);
             }
