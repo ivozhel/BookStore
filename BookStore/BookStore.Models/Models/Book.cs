@@ -7,7 +7,7 @@ namespace BookStore.Models.Models
     public class Book : ICacheItem<int>
     {
         [Key(0)]
-        public int ID { get; set; }
+        public int Id { get; set; }
         [Key(1)]
         public string Title { get; set; }
         [Key(2)]
@@ -21,7 +21,7 @@ namespace BookStore.Models.Models
 
         public int GetKey()
         {
-            return ID;
+            return Id;
         }
     }
 }

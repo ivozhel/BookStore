@@ -154,8 +154,8 @@ namespace BookStore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
                     await conn.QueryAsync<Book>("UPDATE Books SET AuthorId = @AuthorId, Title = @Title, LastUpdated = GETDATE(), Quantity = @Quantity, Price = @Price WHERE Id = @ID",
-                        new { ID = book.ID, AuthorId = book.AuthorId, Title = book.Title, Quantity = book.Quantity, Price = book.Price });
-                    return await GetByID(book.ID);
+                        new { ID = book.Id, AuthorId = book.AuthorId, Title = book.Title, Quantity = book.Quantity, Price = book.Price });
+                    return await GetByID(book.Id);
                 }
             }
             catch (Exception e)

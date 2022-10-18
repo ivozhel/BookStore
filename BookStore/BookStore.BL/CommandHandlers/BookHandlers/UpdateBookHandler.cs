@@ -25,7 +25,7 @@ namespace BookStore.BL.CommandHandlers.BookHandlers
                 return null;
             }
             var bookToAdd = _mapper.Map<Book>(request.book);
-            bookToAdd.ID = request.bookId;
+            bookToAdd.Id = request.bookId;
             return await _bookRepo.UpdateBook(bookToAdd);
         }
     }
