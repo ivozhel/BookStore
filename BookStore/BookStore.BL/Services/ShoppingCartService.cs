@@ -99,7 +99,7 @@ namespace BookStore.BL.Services
                     return;
                 }
                 var books = shoppingCart.Books.ToList();
-                books.Remove(books.Single(x=>x.Id == bookId));
+                books.Remove(books.FirstOrDefault(x=>x.Id == bookId));
                 shoppingCart.Books = books;
                 await _shoppingCartRepo.Update(shoppingCart, userId);
             }
