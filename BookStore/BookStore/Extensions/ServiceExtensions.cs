@@ -1,11 +1,9 @@
 ﻿using BookStore.BL.Interfaces;
 using BookStore.BL.Services;
-using BookStore.Caches.KafkaService;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepos;
 using BookStore.DL.Repositories.MongoRepos;
 using BookStore.DL.Repositories.MsSQL;
-using BookStore.Models.Models;
 
 namespace BookStore.Extensions
 {
@@ -34,11 +32,6 @@ namespace BookStore.Extensions
             //services.AddSingleton<IAuthorService, AuthorService>();
             return services;
         }
-        public static IServiceCollection SubscribeToCache<TKey,TValue>(this IServiceCollection services)
-        {
-            services.AddHostedService<ConsumerHostedService<int, Book>>();
-            services.AddSingleton<KafkaConsumer<TKey,TValue>>();
-            return services;
-        }
+
     }
 }

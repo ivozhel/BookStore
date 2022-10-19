@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookStore.Caches\BookStore.Caches.csproj" />
     <ProjectReference Include="..\BookStore.DL\BookStore.DL.csproj" />
     <ProjectReference Include="..\BookStore.Models\BookStore.Models.csproj" />
   </ItemGroup>
