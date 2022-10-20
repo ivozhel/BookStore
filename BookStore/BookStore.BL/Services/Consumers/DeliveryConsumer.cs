@@ -12,7 +12,7 @@ using BookStore.Models.Models;
 using Generator.Models;
 using Microsoft.Extensions.Options;
 
-namespace BookStore.Caches.Consumers
+namespace BookStore.BL.Services.Consumers
 {
     public class DeliveryConsumer : KafkaConsumer<int, Delivery>
     {

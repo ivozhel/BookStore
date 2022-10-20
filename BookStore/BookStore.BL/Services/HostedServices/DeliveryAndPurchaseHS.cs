@@ -1,10 +1,10 @@
-﻿using BookStore.Caches.Consumers;
+﻿using BookStore.BL.Services.Consumers;
 using BookStore.DL.Interfaces;
 using BookStore.Models.Models.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace BookStore.Caches
+namespace BookStore.BL.Services.HostedServices
 {
     public class DeliveryAndPurchaseHS : IHostedService
     {

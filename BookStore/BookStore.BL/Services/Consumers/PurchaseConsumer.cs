@@ -11,7 +11,7 @@ using BookStore.Models.Models.Configurations;
 using Generator.Models;
 using Microsoft.Extensions.Options;
 
-namespace BookStore.Caches.Consumers
+namespace BookStore.BL.Services.Consumers
 {
     public class PurchaseConsumer : KafkaConsumer<Guid,Purchase>
     {
