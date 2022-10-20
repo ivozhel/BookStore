@@ -13,25 +13,41 @@ using Microsoft.Extensions.Options;
 
 namespace BookStore.BL.Services.Consumers
 {
-    public class PurchaseConsumer : KafkaConsumer<Guid,Purchase>
+    public class PurchaseConsumer : KafkaConsumer<Guid, Purchase>
     {
         private readonly IBookRepo _bookRepo;
         private readonly IOptions<KafkaConfiguration> _options;
+        private readonly TransformBlock<Purchase, Purchase> _purchaseTransformBlockAuthorInfo;
         private readonly TransformBlock<Purchase, string> _purchaseTransformBlock;
         private readonly ActionBlock<string> actionBlock;
+        private HttpClient client;
         public PurchaseConsumer(IBookRepo bookRepo, IOptions<KafkaConfiguration> options) : base(options)
         {
+            client = new HttpClient();
             _bookRepo = bookRepo;
             _options = options;
+            _purchaseTransformBlockAuthorInfo = new TransformBlock<Purchase, Purchase>(async pur =>
+            {
+                foreach (var book in pur.Books)
+                {
+                    if (!pur.AdditionalInfo.ContainsKey(book.AuthorId))
+                    {
+                        var additionalInfo = await client.GetStringAsync($"http://localhost:5225/AuthorInfo/AuthorInfo?id={book.AuthorId}");
+                        pur.AdditionalInfo.Add(book.AuthorId, additionalInfo);
+                    }
+                }
+                return pur;
+
+            });
             _purchaseTransformBlock = new TransformBlock<Purchase, string>(async pur =>
             {
                 var str = new StringBuilder();
                 foreach (var bookToAdd in pur.Books)
                 {
                     var book = await _bookRepo.GetByID(bookToAdd.Id);
-                    var bookCount = pur.Books.Count(x => x.Id == book.Id);
                     if (book != null)
                     {
+                        var bookCount = pur.Books.Count(x => x.Id == book.Id);
                         if (book.Quantity < bookCount)
                         {
                             str.AppendLine($"Book with id {book.Id} did not have enough quantity for purchase with id {pur.Id}");
@@ -59,6 +75,7 @@ namespace BookStore.BL.Services.Consumers
             {
                 Console.WriteLine(s);
             });
+            _purchaseTransformBlockAuthorInfo.LinkTo(_purchaseTransformBlock);
             _purchaseTransformBlock.LinkTo(actionBlock);
         }
 
@@ -68,8 +85,9 @@ namespace BookStore.BL.Services.Consumers
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
+
                     var result = base._consumer.Consume();
-                    _purchaseTransformBlock.Post(result.Value);
+                    _purchaseTransformBlockAuthorInfo.Post(result.Value);
                 }
             }, cancellationToken);
 
