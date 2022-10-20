@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using BookStore.BL.Providers.Interfaces;
 using BookStore.Caches.KafkaService;
 using BookStore.DL.Interfaces;
 using BookStore.Models.Models;
@@ -20,24 +22,21 @@ namespace BookStore.BL.Services.Consumers
         private readonly TransformBlock<Purchase, Purchase> _purchaseTransformBlockAuthorInfo;
         private readonly TransformBlock<Purchase, string> _purchaseTransformBlock;
         private readonly ActionBlock<string> actionBlock;
-        private HttpClient client;
-        public PurchaseConsumer(IBookRepo bookRepo, IOptions<KafkaConfiguration> options) : base(options)
+        private readonly IAdditionalInfoClientProvider _additionalInfoClientProvider;
+        public PurchaseConsumer(IBookRepo bookRepo, IOptions<KafkaConfiguration> options, IAdditionalInfoClientProvider additionalInfoClientProvider) : base(options)
         {
-            client = new HttpClient();
+            _additionalInfoClientProvider = additionalInfoClientProvider;
             _bookRepo = bookRepo;
             _options = options;
             _purchaseTransformBlockAuthorInfo = new TransformBlock<Purchase, Purchase>(async pur =>
             {
-                foreach (var book in pur.Books)
+                var tasks = pur.Books.DistinctBy(x => x.AuthorId).Select(x => _additionalInfoClientProvider.GetAdditionalInfo(x.AuthorId));
+                var result = await Task.WhenAll(tasks);
+                foreach (var item in result)
                 {
-                    if (!pur.AdditionalInfo.ContainsKey(book.AuthorId))
-                    {
-                        var additionalInfo = await client.GetStringAsync($"http://localhost:5225/AuthorInfo/AuthorInfo?id={book.AuthorId}");
-                        pur.AdditionalInfo.Add(book.AuthorId, additionalInfo);
-                    }
+                    pur.AdditionalInfo.Add(item.Item1, item.Item2);
                 }
                 return pur;
-
             });
             _purchaseTransformBlock = new TransformBlock<Purchase, string>(async pur =>
             {
@@ -85,9 +84,15 @@ namespace BookStore.BL.Services.Consumers
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
+                    try
+                    {
+                        var result = base._consumer.Consume();
+                        _purchaseTransformBlockAuthorInfo.Post(result.Value);
+                    }
+                    catch (Exception e)
+                    {
 
-                    var result = base._consumer.Consume();
-                    _purchaseTransformBlockAuthorInfo.Post(result.Value);
+                    }
                 }
             }, cancellationToken);
 

@@ -99,6 +99,9 @@ builder.Services.AddAuthorization(o =>
 builder.Services.Configure<KafkaConfiguration>(
     builder.Configuration.GetSection(nameof(KafkaConfiguration)));
 
+builder.Services.Configure<AdditionalInfoEndPoint>(
+    builder.Configuration.GetSection(nameof(AdditionalInfoEndPoint)));
+
 builder.Services.Configure<MongoPurchaseConfiguration>(
     builder.Configuration.GetSection(nameof(MongoPurchaseConfiguration)));
 builder.Services.Configure<MongoShoppingCart>(
