@@ -1,5 +1,7 @@
 using System.Text;
 using BookStore.BL.CommandHandlers.BookHandlers;
+using BookStore.BL.Services.HostedServices;
+using BookStore.Caches;
 using BookStore.DL.Repositories.MsSQL;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
@@ -32,7 +34,6 @@ builder.Logging.AddSerilog(logger);
 // Add services to the container.
 builder.Services.RegisterRepos()
     .RegisterServices()
-    .SubscribeToCache<int, Book>()
     .AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
@@ -103,6 +104,7 @@ builder.Services.Configure<MongoPurchaseConfiguration>(
 builder.Services.Configure<MongoShoppingCart>(
     builder.Configuration.GetSection(nameof(MongoShoppingCart)));
 
+builder.Services.AddHostedService<DeliveryAndPurchaseHS>();
 
 
 var app = builder.Build();

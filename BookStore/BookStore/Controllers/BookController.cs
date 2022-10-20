@@ -12,12 +12,10 @@ namespace BookStore.Controllers
     public class BookController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly KafkaConsumer<int, Book> _consumer;
 
-        public BookController(IMediator mediator, KafkaConsumer<int, Book> consumer)
+        public BookController(IMediator mediator)
         {
             _mediator = mediator;
-            _consumer = consumer;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -25,12 +23,6 @@ namespace BookStore.Controllers
         public async Task<IActionResult> Get()
         {
             return Ok(await _mediator.Send(new GetAllBooksCommand()));
-        }
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("GetBooksFromKafka")]
-        public async Task<IActionResult> GetFromKafka()
-        {
-            return Ok(_consumer.ReturnValues().Count);
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

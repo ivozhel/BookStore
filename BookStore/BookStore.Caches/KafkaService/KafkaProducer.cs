@@ -30,5 +30,6 @@ namespace BookStore.Caches.KafkaService
             await producer.ProduceAsync(typeof(TValue).Name, msg);
 
         }
+
     }
 }

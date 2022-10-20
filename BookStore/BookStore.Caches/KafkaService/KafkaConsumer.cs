@@ -5,11 +5,11 @@ using Microsoft.Extensions.Options;
 
 namespace BookStore.Caches.KafkaService
 {
-    public class KafkaConsumer<TKey, TValue>
+    public abstract class KafkaConsumer<TKey, TValue>
     {
         private readonly ConsumerConfig _consumerConfig;
         private readonly IOptions<KafkaConfiguration> _kafkaSettings;
-        private readonly List<TValue> _memoList;
+        protected readonly IConsumer<TKey, TValue> _consumer;
         public KafkaConsumer(IOptions<KafkaConfiguration> myJsonSettings)
         {
             _kafkaSettings = myJsonSettings;
@@ -19,32 +19,12 @@ namespace BookStore.Caches.KafkaService
                 AutoOffsetReset = (AutoOffsetReset)_kafkaSettings.Value.AutoOffsetReset,
                 GroupId = _kafkaSettings.Value.GroupId,
             };
-            _memoList = new List<TValue>();
-        }
 
-        public Task Consume(CancellationToken cancellationToken)
-        {
-            var consumer = new ConsumerBuilder<TKey, TValue>(_consumerConfig).SetValueDeserializer(new DeserializeGen<TValue>())
+            _consumer = new ConsumerBuilder<TKey, TValue>(_consumerConfig).SetValueDeserializer(new DeserializeGen<TValue>())
                                                                              .SetKeyDeserializer(new DeserializeGen<TKey>()).Build();
-            consumer.Subscribe(typeof(TValue).Name);
-            Task.Run(() =>
-            {
-
-                while (true)
-                {
-                    var result = consumer.Consume(cancellationToken);
-                    if (result != null)
-                    {
-                        _memoList.Add(result.Value);
-                    }
-                }
-            },cancellationToken);
-            return Task.CompletedTask;
+            _consumer.Subscribe(typeof(TValue).Name);
         }
-        public List<TValue> ReturnValues()
-        {
-            return _memoList;
-        }
+        public abstract Task Consume(CancellationToken cancellationToken);
 
     }
 }
