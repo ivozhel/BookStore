@@ -1,4 +1,6 @@
 ﻿using BookStore.BL.Interfaces;
+using BookStore.BL.Providers;
+using BookStore.BL.Providers.Interfaces;
 using BookStore.BL.Services;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepos;
@@ -28,6 +30,7 @@ namespace BookStore.Extensions
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddSingleton<IShoppingCartService, ShoppingCartService>();
             services.AddSingleton<IBookService, BookService>();
+            services.AddSingleton<IAdditionalInfoClientProvider, AdditionalInfoClientProvider>();
             //services.AddSingleton<IUserService, EmplyeeService>();
             //services.AddSingleton<IAuthorService, AuthorService>();
             return services;
